@@ -51,6 +51,7 @@ class Homework(Base):
     id = Column(Integer, primary_key=True, autoincrement=False)
     name = Column(String, nullable=False)
     subject = Column(String, nullable=False)
+    creation_date = Column(DateTime)
     due_date = Column(DateTime)
     teacher = Column(String)
     students = relationship('Student', secondary=student_homeworks, back_populates='homeworks')

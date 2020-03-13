@@ -109,8 +109,14 @@ class Notifier(commands.Cog):
                 homeworks = await get_homeworks(self.bot.session, student.id, self.token)
             if homeworks:
                 logging.info('Homeworks: ' + str(homeworks))
-                homeworks = list(map(lambda homework: db.Homework(id=homework['mtar_Id'], name=homework['mtar_nombre'], due_date=datetime.strptime(
-                    homework['mtar_fecActivacionHasta'], '%Y-%m-%dT%H:%M:%S'), subject=homework['asivcur_nombre'], teacher=homework['prof_nombre']), homeworks))
+                homeworks = list(map(lambda homework: db.Homework(
+                    id=homework['mtar_Id'],
+                    name=homework['mtar_nombre'],
+                    creation_date=datetime.strptime(homework['mtar_fecActivacionDesde'], '%Y-%m-%dT%H:%M:%S'),
+                    due_date=datetime.strptime(homework['mtar_fecActivacionHasta'], '%Y-%m-%dT%H:%M:%S'),
+                    subject=homework['asivcur_nombre'],
+                    teacher=homework['prof_nombre']
+                ), homeworks))
                 for guild in student.guilds:
                     logging.info('starting with guild')
                     channel = discord.utils.get(self.bot.guilds, id=guild.id).system_channel
@@ -128,7 +134,8 @@ class Notifier(commands.Cog):
                         embed = discord.Embed(
                             title=f'Nueva tarea: {homework.name}',
                             description=f'**Materia**: {homework.subject}\n**Profesor**: {homework.teacher}\n**Caduca**: {homework.due_date.strftime("%b %d, %Y")}',
-                            color=discord.Color.blue()
+                            color=discord.Color.blue(),
+                            timestamp=homework.creation_date
                         )
                         alias = student.alias or student.username
                         embed.description = alias + ', tienes una nueva tarea en [aulaplaneta](https://alumnos.aulaplaneta.com/#/login)\n' + embed.description
