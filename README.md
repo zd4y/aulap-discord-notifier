@@ -22,6 +22,7 @@ Add the environment variables with `export` from your terminal (If you are on Wi
 ```
 export AULAP_USERNAME={Your username}
 export AULAP_PASSWORD={Your password}
+export DATABASE_URL={Your database's URL}
 ```
 
 ### Creating the databases

@@ -11,7 +11,7 @@ from datetime import datetime
 
 class Notifier(commands.Cog):
     def __init__(self, bot):
-        self.bot: commands.Bot = bot
+        self.bot = bot
         self.token = None
         self.check_homeworks.start()
 
@@ -37,7 +37,8 @@ class Notifier(commands.Cog):
         db.session.commit()
         embed = discord.Embed(
             title='Estudiante añadido con éxito! ✅',
-            description=f'El estudiante con username `{username}` ha sido agregado exitosamente a la base de datos. Pronto recibirás notificaciones de tus tareas en aulaplaneta.',
+            description=f'El estudiante con username `{username}` ha sido agregado exitosamente a la base de datos.' +
+                        'Pronto recibirás notificaciones de tus tareas en aulaplaneta.',
             color=discord.Color.green()
         )
         await ctx.send(embed=embed)
@@ -125,7 +126,8 @@ class Notifier(commands.Cog):
                     for homework in homeworks:
                         logging.info('starting with homework')
                         logging.info('checking if homework is in database')
-                        db_homework = await db.get(db.CachedHomework, homework_id=homework.id, guild=guild, student=student)
+                        db_homework = await db.get(db.CachedHomework, homework_id=homework.id, guild=guild,
+                                                   student=student)
                         logging.info('checking...')
                         if db_homework:
                             logging.info('homework was in database, skipping')
@@ -133,12 +135,16 @@ class Notifier(commands.Cog):
                         logging.info('check ended')
                         embed = discord.Embed(
                             title=f'Nueva tarea: {homework.name}',
-                            description=f'**Materia**: {homework.subject}\n**Profesor**: {homework.teacher}\n**Caduca**: {homework.due_date.strftime("%b %d, %Y")}',
+                            description=f'**Materia**: {homework.subject}\n' +
+                                        f'**Profesor**: {homework.teacher}\n' +
+                                        f'**Caduca**: {homework.due_date.strftime("%b %d, %Y")}',
                             color=discord.Color.blue(),
                             timestamp=homework.creation_date
                         )
                         alias = student.alias or student.username
-                        embed.description = alias + ', tienes una nueva tarea en [aulaplaneta](https://alumnos.aulaplaneta.com/#/login)\n' + embed.description
+                        embed.description = alias + ', tienes una nueva tarea en ' + \
+                            '[aulaplaneta](https://alumnos.aulaplaneta.com/#/login)\n' + \
+                            embed.description
                         logging.info('sending embed')
                         await channel.send(embed=embed)
                         logging.info('checking if homework in database x2')
